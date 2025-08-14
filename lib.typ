@@ -27,32 +27,40 @@
   return none
 }
 
-#let go-board(stones: (), size: 13, marks: (), padding: 0mm) = {
-  let spacing = 7mm
-  let background-color = orange.lighten(70%)
+#let draw-stone(highlight-color: none, shadow-color: none, diameter) = {
+  move(
+    dx: -diameter / 2,
+    dy: -diameter / 2,
+    circle(
+      width: diameter,
+      fill: gradient.radial(center: (40%, 40%), highlight-color, shadow-color),
+    ),
+  )
+}
+#let draw-black-stone = draw-stone.with(highlight-color: luma(130), shadow-color: luma(40))
+#let draw-white-stone = draw-stone.with(highlight-color: luma(100%), shadow-color: luma(70%))
 
+#let go-board(
+  stones: (),
+  size: 13,
+  marks: (),
+  padding: 0mm,
+  board-fill: orange.lighten(70%),
+  mark-radius: 2%,
+  stone-diameter-ratio: 0.75,
+  black-stone-fn: draw-black-stone,
+  white-stone-fn: draw-white-stone,
+) = {
   let ratio-line-board-len = (100% - 2 * padding) * (size - 1) / size
   let edge-padding = padding + 0.5 / (size - 1) * ratio-line-board-len
+  let stone-diameter = stone-diameter-ratio / size * 100%
 
-  let mark-radius = 2%
-  let stone-diameter = 0.75 / size * 100%
-
-  let draw-stone(highlight-color: none, shadow-color: none, diameter) = {
-    move(
-      dx: -diameter / 2,
-      dy: -diameter / 2,
-      circle(
-        width: diameter,
-        fill: gradient.radial(center: (40%, 40%), highlight-color, shadow-color),
-      ),
-    )
-  }
-  let draw-black-stone = draw-stone.with(highlight-color: luma(130), shadow-color: luma(40))
-  let draw-white-stone = draw-stone.with(highlight-color: luma(100%), shadow-color: luma(70%))
-
+  let black-stone = black-stone-fn(stone-diameter)
+  let white-stone = white-stone-fn(stone-diameter)
 
   square(
-    fill: background-color,
+    fill: board-fill,
+    stroke: none,
     inset: 0%,
     outset: 0%,
     width: 100%,
@@ -91,20 +99,18 @@
           dx: edge-padding + (coords.col) * ratio-line-board-len / (size - 1),
           dy: edge-padding + (coords.row) * ratio-line-board-len / (size - 1),
           if calc.even(i) {
-            draw-white-stone(stone-diameter)
-          } else { draw-black-stone(stone-diameter) },
+            black-stone
+          } else { white-stone },
         )
       }
     },
   )
 }
 
-#let full-go-board = go-board.with(
+#let go-board-19 = go-board.with(
   marks: ((3, 3), (3, 9), (3, 15), (9, 3), (9, 9), (9, 15), (15, 3), (15, 9), (15, 15)),
   size: 19,
 )
-
-#let go-board-19 = full-go-board
 #let go-board-13 = go-board.with(
   size: 13,
   marks: ((3, 3), (9, 3), (3, 9), (9, 9), (6, 6)),
@@ -114,6 +120,25 @@
   marks: ((2, 2), (6, 2), (2, 6), (6, 6), (4, 4)),
 )
 
-#block(width: 100%, go-board-19(stones: ("ab", "ac", "ef"), padding: 1mm)),
+#let stones = ("ab", "ac", "ef")
+
+#box(stroke: black, width: 5cm, go-board-9(stones: stones))
+#box(stroke: black, width: 5cm, go-board-9(
+  stones: stones,
+  padding: 1mm,
+  board-fill: white,
+  black-stone-fn: diameter => move(dx: -diameter / 2, dy: -diameter / 2, circle(
+    width: diameter,
+    fill: black,
+    stroke: white + 0.2pt,
+  )),
+  white-stone-fn: diameter => move(dx: -diameter / 2, dy: -diameter / 2, circle(
+    width: diameter,
+    fill: white,
+    stroke: black + 0.2pt,
+  )),
+))
+
+
 
 #lorem(20)
