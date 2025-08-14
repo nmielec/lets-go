@@ -57,6 +57,7 @@
   white-stone: white-stone,
   open-edges: "",
   open-edges-added-length: 4%,
+  add-played-number: false,
 ) = {
   let ratio-line-board-len = (100% - 2 * padding) * (size - 1) / size
   let edge-padding = padding + 0.5 / (size - 1) * ratio-line-board-len
@@ -97,7 +98,10 @@
         place(
           dx: edge-padding + p / (size - 1) * ratio-line-board-len,
           dy: edge-padding - open-edges-paddings.at("top"),
-          line(angle: 90deg, length: ratio-line-board-len + open-edges-paddings.at("top") + open-edges-paddings.at("bottom")),
+          line(
+            angle: 90deg,
+            length: ratio-line-board-len + open-edges-paddings.at("top") + open-edges-paddings.at("bottom"),
+          ),
         )
       }
 
@@ -115,14 +119,30 @@
       }
 
       for (i, stone) in stones.enumerate() {
+        let is-black = calc.even(i)
         let coords = input-position-to-coords(stone)
+        let dx = edge-padding + (coords.col) * ratio-line-board-len / (size - 1)
+        let dy = edge-padding + (coords.row) * ratio-line-board-len / (size - 1)
+
         place(
-          dx: edge-padding + (coords.col) * ratio-line-board-len / (size - 1),
-          dy: edge-padding + (coords.row) * ratio-line-board-len / (size - 1),
-          if calc.even(i) {
+          dx: dx,
+          dy: dy,
+          if is-black {
             black-stone
           } else { white-stone },
         )
+        if add-played-number {
+          place(
+            dx: dx,
+            dy: dy,
+            // Hacky, I don't know how to center it better
+            move(dx: -5%, dy: -5%, box(width: 10%, height: 10%, align(horizon + center, text(
+              fill: if is-black {
+                white
+              } else { black },
+            )[#i]))),
+          )
+        }
       }
     },
   )
@@ -165,5 +185,6 @@
     stroke: black + 0.2pt,
   )),
   stone-diameter-ratio: 0.8,
+  add-played-number: true,
 ))
 
