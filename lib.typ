@@ -41,6 +41,22 @@
 #let black-stone = draw-stone(highlight-color: luma(130), shadow-color: luma(40))
 #let white-stone = draw-stone(highlight-color: luma(100%), shadow-color: luma(70%))
 
+
+/// This is the main function that draws a go board
+///
+/// - stones (): List of stones to place
+/// - size (int): Board size
+/// - marks (): Reference marks to draw
+/// - padding (): Border padding
+/// - board-fill (): Background fill
+/// - mark-radius (): Reference marks radius
+/// - stone-diameter-ratio (): Ratio of stone diameter to grid size
+/// - black-stone (): Black stone to use
+/// - white-stone (): White stone to use
+/// - open-edges (): Which edges to extend a bit to mark that the board extends there
+/// - open-edges-added-length (): Proportion to extend the edges
+/// - add-played-number (): Add numbers showing the play order
+/// -> content
 #let go-board(
   stones: (),
   size: 13,
@@ -51,7 +67,7 @@
   stone-diameter-ratio: 0.75,
   black-stone: black-stone,
   white-stone: white-stone,
-  open-edges: "",
+  open-edges: (),
   open-edges-added-length: 4%,
   add-played-number: false,
 ) = {
@@ -160,41 +176,19 @@
   )
 }
 
+
 #let go-board-19 = go-board.with(
   marks: ((3, 3), (3, 9), (3, 15), (9, 3), (9, 9), (9, 15), (15, 3), (15, 9), (15, 15)),
   size: 19,
 )
+
 #let go-board-13 = go-board.with(
   size: 13,
   marks: ((3, 3), (9, 3), (3, 9), (9, 9), (6, 6)),
 )
+
 #let go-board-9 = go-board.with(
   size: 9,
   marks: ((2, 2), (6, 2), (2, 6), (6, 6), (4, 4)),
 )
-
-#box(stroke: black, width: 5cm, go-board-9(stones: ("ab", "ac", "ef")))
-#box(stroke: black, width: 5cm, go-board(
-  size: 5,
-  // Stones stay positioned from the top left corner
-  stones: ((position: "ac", color: "white"), (position: "bb", skip-numbering: true), "cc", "ed", "ec", "dc"),
-  marks: ("db",),
-  mark-radius: 5%,
-  open-edges: ("left", "bottom"),
-  open-edges-added-length: 7%,
-  padding: 2mm,
-  board-fill: luma(90%),
-  black-stone: move(dx: -50%, dy: -50%, circle(
-    width: 100%,
-    fill: black,
-    stroke: white + 0.2pt,
-  )),
-  white-stone: move(dx: -50%, dy: -50%, circle(
-    width: 100%,
-    fill: white,
-    stroke: black + 0.2pt,
-  )),
-  stone-diameter-ratio: 0.8,
-  add-played-number: true,
-))
 
