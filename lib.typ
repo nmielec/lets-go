@@ -66,10 +66,10 @@
   white-stone = scale(stone-diameter-ratio / size * 100%, origin: top + left, white-stone)
 
   let open-edges-paddings = (
-    "n": 0%,
-    "e": 0%,
-    "s": 0%,
-    "w": 0%,
+    top: 0%,
+    right: 0%,
+    bottom: 0%,
+    left: 0%,
   )
 
   for dir in open-edges-paddings.keys() {
@@ -88,16 +88,16 @@
       for p in range(size) {
         place(
           dy: edge-padding + p / (size - 1) * ratio-line-board-len,
-          dx: edge-padding - open-edges-paddings.at("w"),
-          line(length: ratio-line-board-len + open-edges-paddings.at("e") + open-edges-paddings.at("w")),
+          dx: edge-padding - open-edges-paddings.at("left"),
+          line(length: ratio-line-board-len + open-edges-paddings.at("left") + open-edges-paddings.at("right")),
         )
       }
 
       for p in range(size) {
         place(
           dx: edge-padding + p / (size - 1) * ratio-line-board-len,
-          dy: edge-padding - open-edges-paddings.at("n"),
-          line(angle: 90deg, length: ratio-line-board-len + open-edges-paddings.at("n") + open-edges-paddings.at("s")),
+          dy: edge-padding - open-edges-paddings.at("top"),
+          line(angle: 90deg, length: ratio-line-board-len + open-edges-paddings.at("top") + open-edges-paddings.at("bottom")),
         )
       }
 
@@ -150,7 +150,7 @@
   stones: ("ac", "bb"),
   marks: ("db",),
   mark-radius: 5%,
-  open-edges: "sw",
+  open-edges: ("left", "bottom"),
   open-edges-added-length: 7%,
   padding: 2mm,
   board-fill: luma(90%),
@@ -164,6 +164,6 @@
     fill: white,
     stroke: black + 0.2pt,
   )),
-  stone-diameter-ratio: 1,
+  stone-diameter-ratio: 0.8,
 ))
 
