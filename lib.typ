@@ -1,7 +1,3 @@
-///
-///
-/// - position (str):
-/// ->
 #let input-position-to-coords(position) = {
   if type(position) == array {
     return (
@@ -118,12 +114,24 @@
         )
       }
 
-      for (i, stone) in stones.enumerate() {
-        let is-black = calc.even(i)
-        let coords = input-position-to-coords(stone)
+      let next-color = "black"
+      let next-number = 1
+      for stone in stones {
+        let is-dict = type(stone) == dictionary
+        let is-black = next-color == "black"
+        let skip-numbering = false
+
+        let coords = input-position-to-coords(if is-dict and "position" in stone { stone.at("position") } else {
+          stone
+        })
+
+        if is-dict and "skip-numbering" in stone { skip-numbering = true }
+        if is-dict and "color" in stone {
+          is-black = stone.at("color") == "black"
+        }
+
         let dx = edge-padding + (coords.col) * ratio-line-board-len / (size - 1)
         let dy = edge-padding + (coords.row) * ratio-line-board-len / (size - 1)
-
         place(
           dx: dx,
           dy: dy,
@@ -131,7 +139,7 @@
             black-stone
           } else { white-stone },
         )
-        if add-played-number {
+        if add-played-number and not skip-numbering {
           place(
             dx: dx,
             dy: dy,
@@ -140,9 +148,13 @@
               fill: if is-black {
                 white
               } else { black },
-            )[#i]))),
+            )[#next-number]))),
           )
         }
+        if not skip-numbering {
+          next-number = next-number + 1
+        }
+        next-color = if is-black { "white" } else { "black" }
       }
     },
   )
@@ -161,13 +173,11 @@
   marks: ((2, 2), (6, 2), (2, 6), (6, 6), (4, 4)),
 )
 
-#let stones = ("ab", "ac", "ef")
-
-#box(stroke: black, width: 5cm, go-board-9(stones: stones))
+#box(stroke: black, width: 5cm, go-board-9(stones: ("ab", "ac", "ef")))
 #box(stroke: black, width: 5cm, go-board(
   size: 5,
   // Stones stay positioned from the top left corner
-  stones: ("ac", "bb"),
+  stones: ((position: "ac", color: "white"), (position: "bb", skip-numbering: true), "cc", "ed", "ec", "dc"),
   marks: ("db",),
   mark-radius: 5%,
   open-edges: ("left", "bottom"),
